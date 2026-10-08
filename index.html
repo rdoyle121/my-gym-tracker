@@ -75,15 +75,15 @@ const PLAN=window.GYM_PLAN;const K='my-gym-tracker-v1';const weekdays=['SUNDAY',
 let timerNotified=false;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const today=()=>new Date().toLocaleDateString('en-CA');const niceDate=s=>new Date(s+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});const dayIndex=()=>{let v=state.selectedDay||weekdays[new Date().getDay()];return Math.max(0,PLAN.days.findIndex(d=>d.day===v))};const day=()=>{const original=PLAN.days[dayIndex()];return {...original,exercises:state.customDays?.[original.day]||original.exercises}};function exercisesFor(d){return state.customDays?.[d.day]||d.exercises}function save(){try{localStorage.setItem(K,JSON.stringify(state))}catch(e){alert('Storage is unavailable/full. Export your data from More to keep a backup.')}}function setTab(t){tab=t;render();window.scrollTo(0,0)}const logsFor=(date,dy)=>state.logs.filter(l=>l.date===date&&l.day===dy);const fmt=x=>Number(x).toLocaleString('en-GB',{maximumFractionDigits:1});const completed=l=>l.filter(x=>x.done).length;
 const CATEGORY_IMAGE={
-'Chest':'assets/chest.png',
-'Back':'assets/back.png',
-'Shoulders':'assets/shoulders.png',
-'Biceps':'assets/biceps.png',
-'Triceps':'assets/triceps.png',
-'Legs & glutes':'assets/legs_glutes.png',
-'Core':'assets/core.png',
-'Cardio':'assets/cardio.png',
-'Forearms':'assets/forearms.png',
+'Chest':'muscle-maps/chest.png',
+'Back':'muscle-maps/back.png',
+'Shoulders':'muscle-maps/shoulders.png',
+'Biceps':'muscle-maps/biceps.png',
+'Triceps':'muscle-maps/triceps.png',
+'Legs & glutes':'muscle-maps/legs_glutes.png',
+'Core':'muscle-maps/core.png',
+'Cardio':'muscle-maps/cardio.png',
+'Forearms':'muscle-maps/forearms.png',
 'Custom':''};
 const CATEGORY_META={
 'Chest':{icon:'🏋️',accent:'#ff556e',tips:['Keep your chest up and shoulders back.','Lower under control, then press strongly.','Use a weight you can control through full range.']},
