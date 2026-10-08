@@ -1,1 +1,1 @@
-{"name": "My Gym Tracker", "short_name": "My Gym", "start_url": "./index.html", "scope": "./", "display": "standalone", "background_color": "#09090d", "theme_color": "#09090d", "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]}
+{"name":"My Gym Tracker","short_name":"My Gym Tracker","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#09090d","theme_color":"#09090d","icons":[{"src":"mg-rendered-icon.png","sizes":"120x120","type":"image/png","purpose":"any"}]}
