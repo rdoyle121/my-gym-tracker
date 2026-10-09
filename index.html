@@ -217,27 +217,37 @@ function renderGymLocator(){
  return '<section class="card"><h2>🗺️ Gym locator</h2><p class="muted tiny">Find gyms around you. Location is only requested when you tap the button.</p><div class="gym-btns"><button class="primary" onclick="locateGyms()" '+(gymLocationLoading?'disabled':'')+'>'+(gymLocationLoading?'Searching…':'📍 Find nearby gyms')+'</button><button class="secondary" onclick="openGymMaps()">Open maps ↗</button></div><p class="gym-status" id="gym-status">'+esc(gymLocationStatus)+'</p>'+list+'<p class="gym-gps-note">Nearby data from OpenStreetMap. Listings may be incomplete. For full listings, use Open maps. Your check-in history stays on this device.</p></section>';
 }
 function chooseGym(i){const g=nearbyGyms[i];if(!g)return;state.gymName=g.name;save();render();window.scrollTo({top:0,behavior:'smooth'})}
-function openGymMaps(){let url=gymCurrentCoords?'https://www.google.com/maps/search/gyms/@'+gymCurrentCoords.lat+','+gymCurrentCoords.lon+',14z':'https://www.google.com/maps/search/gyms+near+me/';window.open(url,'_blank','noopener')}
+function openGymMaps(){let url=gymCurrentCoords?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('gyms near '+gymCurrentCoords.lat+','+gymCurrentCoords.lon):'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('gyms near me');window.open(url,'_blank','noopener')}
 function gymDistance(a,b,c,d){const R=6371000,toRad=x=>x*Math.PI/180,dl=toRad(c-a),dn=toRad(d-b);const h=Math.sin(dl/2)**2+Math.cos(toRad(a))*Math.cos(toRad(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(h)))}
 function updateGymStatus(str){gymLocationStatus=str;const el=document.getElementById('gym-status');if(el)el.textContent=str}
 async function locateGyms(){
  if(gymLocationLoading)return;
- if(!navigator.geolocation){updateGymStatus('Location is not supported here. Tap Open maps instead.');return}
+ if(!navigator.geolocation){updateGymStatus('Location unavailable. Use Open maps to find gyms nearby.');return}
  gymLocationLoading=true;nearbyGyms=[];updateGymStatus('Requesting your location…');
  try{
   const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:false,timeout:14000,maximumAge:120000}));
   const lat=pos.coords.latitude,lon=pos.coords.longitude;gymCurrentCoords={lat,lon};
-  updateGymStatus('Looking for gyms within 5 km…');
-  const q='[out:json][timeout:20];(nwr(around:5000,'+lat+','+lon+')[leisure=fitness_centre];nwr(around:5000,'+lat+','+lon+')[leisure=sports_centre][sport=fitness];);out center 60;';
-  const controller=new AbortController(),abort=setTimeout(()=>controller.abort(),22000);
-  let data;
-  try{const resp=await fetch('https://overpass.kumi.systems/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(q),signal:controller.signal});if(!resp.ok)throw Error('Gym listings are temporarily unavailable');data=await resp.json()}finally{clearTimeout(abort)}
-  nearbyGyms=(data.elements||[]).map(e=>{const p=e.center||e,t=e.tags||{};if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon))return null;return {name:t.name||'Fitness centre',lat:p.lat,lon:p.lon,address:[t['addr:street'],t['addr:city']].filter(Boolean).join(', '),distance:gymDistance(lat,lon,p.lat,p.lon)}}).filter(Boolean).sort((a,b)=>a.distance-b.distance).slice(0,15);
-  updateGymStatus(nearbyGyms.length?nearbyGyms.length+' nearby gyms found. Tap Directions or Use for check-in.':'No gym listings found nearby. Try Open maps for more results.');
- }catch(err){updateGymStatus(err&&err.code===1?'Location permission denied. Enable location for this website or tap Open maps.':'Unable to load nearby gyms right now. Tap Open maps to search instead.')}
+  updateGymStatus('Location found. Searching gym listings near you…');
+  const q='[out:json][timeout:15];(nwr(around:5000,'+lat+','+lon+')[leisure=fitness_centre];nwr(around:5000,'+lat+','+lon+')[leisure=sports_centre][sport=fitness];);out center 60;';
+  let data=null;
+  for(const endpoint of ['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.nchc.org.tw/api/interpreter']){
+   const controller=new AbortController(),abort=setTimeout(()=>controller.abort(),10000);
+   try{
+    const resp=await fetch(endpoint+'?data='+encodeURIComponent(q),{method:'GET',signal:controller.signal,headers:{'Accept':'application/json'}});
+    if(!resp.ok)throw Error('Listing service returned '+resp.status);
+    const payload=await resp.json();if(!Array.isArray(payload.elements))throw Error('No elements in response');
+    data=payload;break;
+   }catch(e){}finally{clearTimeout(abort)}
+  }
+  if(!data){updateGymStatus('Location found, but live gym listings are unavailable. Tap Open maps to see nearby gyms in Google Maps.');}
+  else{
+   const seen=new Set();
+   nearbyGyms=data.elements.map(e=>{const p=e.center||e,t=e.tags||{};if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon))return null;return {name:t.name||'Fitness centre',lat:p.lat,lon:p.lon,address:[t['addr:street'],t['addr:city']].filter(Boolean).join(', '),distance:gymDistance(lat,lon,p.lat,p.lon)}}).filter(g=>{if(!g)return false;const key=g.name+'-'+g.lat.toFixed(4)+'-'+g.lon.toFixed(4);if(seen.has(key))return false;seen.add(key);return true}).sort((a,b)=>a.distance-b.distance).slice(0,15);
+   updateGymStatus(nearbyGyms.length?nearbyGyms.length+' nearby gyms found. Tap Directions or Use for check-in.':'No gym listings found within 5 km. Tap Open maps for more choices.');
+  }
+ }catch(err){updateGymStatus(err&&err.code===1?'Location permission denied. Allow location access or use Open maps.':err&&err.code===3?'Location timed out. Try again or use Open maps.':'Could not determine your location. Try Open maps instead.')}
  finally{gymLocationLoading=false;if(tab==='settings')render()}
 }
-
 function exportData(){const b=new Blob([JSON.stringify({version:1,exported:new Date().toISOString(),data:state},null,2)],{type:'application/json'});let u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='my-gym-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),3000)}async function importData(inp){let f=inp.files[0];if(!f)return;try{let parsed=JSON.parse(await f.text());let data=parsed.data||parsed;if(!Array.isArray(data.logs)||!Array.isArray(data.bodyWeights))throw Error('Unexpected backup format');if(!confirm('Replace your current logs with this backup?'))return;state={...state,...data};save();render();alert('Backup imported.')}catch(e){alert('Could not import backup: '+e.message)}}function clearData(){if(!confirm('Permanently delete all workouts and measurements on this device? Export a backup first.'))return;state={logs:[],bodyWeights:[],shoppingChecked:[],selectedDay:null,customDays:{},gymVisits:[],gymActive:null,gymName:''};save();render()}
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script></body></html>
