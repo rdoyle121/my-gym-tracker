@@ -145,8 +145,8 @@ function getSet(ex,i){let key=day().day+'|'+ex.name+'|'+i;let done=logsFor(windo
 function overloadAdvice(ex){
  const chosen=window.workDate||today(),rows=state.logs.filter(l=>l.done&&l.exercise===ex.name&&l.date<chosen&&Number(l.weight)>0&&Number(l.reps)>0);
  if(!rows.length)return '<div class="overload-advice"><b>📈 Progressive overload</b><div>Log your first weighted workout to unlock a suggestion.</div></div>';
- const lastDate=rows.reduce((a,l)=>l.date>a?l.date:a,'');const last=rows.filter(l=>l.date===lastDate),target=String(ex.reps||'').match(/(\\d+)\\s*[-–]\\s*(\\d+)/),single=String(ex.reps||'').match(/^(\\d+)/),top=target?Number(target[2]):single?Number(single[1]):null;
- const weights=last.map(l=>Number(l.weight)),base=Math.max(...weights),allHit=top!==null&&last.length>=Math.min(Number(ex.sets)||1,1)&&last.every(l=>Number(l.reps)>=top),isLower=/squat|deadlift|leg press|hack squat|lunge|hip thrust|glute|calf|leg extension|leg curl/i.test(ex.name),step=isLower?5:2.5;
+ const lastDate=rows.reduce((a,l)=>l.date>a?l.date:a,'');const last=rows.filter(l=>l.date===lastDate),target=String(ex.reps||'').match(/(\d+)\s*[-–]\s*(\d+)/),single=String(ex.reps||'').match(/^(\d+)/),top=target?Number(target[2]):single?Number(single[1]):null;
+ const weights=last.map(l=>Number(l.weight)),base=Math.max(...weights),allHit=top!==null&&last.length>=(Number(ex.sets)||1)&&last.every(l=>Number(l.reps)>=top),isLower=/squat|deadlift|leg press|hack squat|lunge|hip thrust|glute|calf|leg extension|leg curl/i.test(ex.name),step=isLower?5:2.5;
  const cardio=/treadmill|running|walking|bike|stair|plank|elliptical|rower|jump rope|dead hang/i.test(ex.name);
  if(cardio)return '';
  let message=allHit?'All '+last.length+' logged sets reached '+top+' reps. Consider trying <strong>'+fmt(base+step)+' kg</strong> next time (+'+fmt(step)+' kg), if your form stays good.':'Aim to reach '+(top?top+' reps on every set':'your target reps')+' with good form before increasing weight. Keep around <strong>'+fmt(base)+' kg</strong> for now.';
