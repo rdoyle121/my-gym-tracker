@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>My Gym Tracker — Authentication Preview</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#0b0b10;color:#f8f8fb}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 0%,#3e1422 0%,#0b0b10 55%)}
+main{width:min(430px,100%);border:1px solid #613040;background:linear-gradient(140deg,#1d1e27,#111117);border-radius:22px;padding:26px;box-shadow:0 20px 70px #0008}
+h1{font-size:27px;margin:0}h1 b{color:#ff3154}.sub{color:#b2b4c3;font-size:13px;margin:6px 0 26px}h2{margin:0 0 15px;font-size:19px}
+label{display:block;font-size:13px;color:#d3d3dd;margin-top:15px}input{margin-top:7px;width:100%;border:1px solid #444553;background:#0c0d14;color:white;font:inherit;border-radius:11px;padding:13px;min-height:46px}
+button{font:inherit;cursor:pointer;border-radius:11px;padding:13px;min-height:44px;border:1px solid #434452;background:#272833;color:white}button:disabled{opacity:.6;cursor:wait}.primary{width:100%;background:linear-gradient(120deg,#fa304e,#dc1741);border:0;font-weight:800;margin-top:18px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:23px}nav button{padding:10px 4px;font-size:12px}nav button[aria-pressed=true]{background:#572238;border-color:#e83b59}
+#message{margin-top:15px;min-height:28px;color:#ffb6c4;font-size:13px;overflow-wrap:anywhere}small,p{color:#aeb1c0;line-height:1.6}#loggedIn{display:none}.secondary{width:100%;margin-top:10px}a{color:#ff8499}
+</style></head><body>
+<main><h1>My <b>Gym</b> Tracker</h1><p class="sub">Accounts preview · development only</p>
+<section id="auth">
+<nav aria-label="Account action"><button type="button" data-mode="login" aria-pressed="true">Log in</button><button type="button" data-mode="signup" aria-pressed="false">Sign up</button><button type="button" data-mode="reset" aria-pressed="false">Reset</button></nav>
+<h2 id="heading">Welcome back</h2>
+<form id="accountForm"><label>Email address<input id="email" type="email" autocomplete="email" required></label>
+<label id="passwordLabel">Password<input id="password" type="password" minlength="6" autocomplete="current-password" required></label>
+<button class="primary" id="submit" type="submit">Log in</button></form>
+<p id="message" role="status" aria-live="polite"></p>
+<p><small>Never put your password in a chat. Your existing tracker and locally stored data are not modified by this preview.</small></p>
+</section>
+<section id="loggedIn"><h2>You're signed in ✓</h2><p id="identity"></p><p>This is an authentication test only. Cloud syncing and data migration are not enabled yet.</p><button class="secondary" id="logout">Log out</button><p id="signedMessage" role="status"></p></section>
+</main>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/+esm';
+const PROJECT_URL='REPLACE_WITH_VERIFIED_SUPABASE_PROJECT_URL';
+const PUBLISHABLE_KEY='sb_publishable_amFSNliMIc5KjOn8wsiNLw_lbsMYwue';
+const configured=/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(PROJECT_URL);
+const supabase=configured?createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}}):null;
+let mode='login';
+const $=id=>document.getElementById(id),form=$('accountForm'),message=$('message');
+function showMsg(value){message.textContent=value||''}
+function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));$('heading').textContent=mode==='signup'?'Create your account':mode==='reset'?'Reset your password':'Welcome back';$('passwordLabel').hidden=mode==='reset';$('password').required=mode!=='reset';$('password').autocomplete=mode==='signup'?'new-password':'current-password';$('submit').textContent=mode==='signup'?'Create account':mode==='reset'?'Send reset email':'Log in';showMsg('')}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+function showUser(user){$('auth').hidden=!!user;$('loggedIn').style.display=user?'block':'none';if(user)$('identity').textContent='Signed in as '+(user.email||'your account')}
+if(!configured)showMsg('Preview needs the exact project URL before account testing can begin.');
+else {const {data}=await supabase.auth.getSession();showUser(data.session?.user);supabase.auth.onAuthStateChange((_event,session)=>showUser(session?.user));}
+form.addEventListener('submit',async e=>{e.preventDefault();if(!supabase){showMsg('Supabase project URL needs configuring first.');return}const btn=$('submit');btn.disabled=true;showMsg('Please wait…');const email=$('email').value.trim(),password=$('password').value;try{
+let result;if(mode==='signup')result=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.href.split('?')[0].split('#')[0]}});
+else if(mode==='reset')result=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('?')[0].split('#')[0]});
+else result=await supabase.auth.signInWithPassword({email,password});
+if(result.error)throw result.error;
+showMsg(mode==='signup'?'Check your email for a confirmation link (if not already confirmed).':mode==='reset'?'If this email is registered, a reset link has been sent.':'Signed in successfully.');
+}catch(err){showMsg(err.message||'Something went wrong. Try again.')}finally{btn.disabled=false}});
+$('logout').addEventListener('click',async()=>{if(!supabase)return;const {error}=await supabase.auth.signOut();if(error)$('signedMessage').textContent=error.message;else setMode('login')});
+</script></body></html>
