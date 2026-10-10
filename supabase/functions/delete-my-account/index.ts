@@ -3,7 +3,7 @@
 // Requires SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY as function secrets.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
 Deno.serve(async req => {
-  const cors={'Access-Control-Allow-Origin':'https://rdoyle121.github.io','Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS'};
+  const cors={'Access-Control-Allow-Origin':'https://rdoyle121.github.io','Access-Control-Allow-Headers':req.headers.get('Access-Control-Request-Headers')||'authorization, apikey, content-type, x-client-info, x-supabase-api-version','Access-Control-Allow-Methods':'POST, OPTIONS'};
   const respond=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json'}});
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
   if(req.method!=='POST')return respond({error:'Method not allowed'},405);
