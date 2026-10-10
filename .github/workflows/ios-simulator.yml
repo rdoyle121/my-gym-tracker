@@ -38,6 +38,8 @@ jobs:
         run: npm run native:add:ios
       - name: Apply MG iOS app icon
         run: npm run native:brand:ios
+      - name: Configure iOS privacy permission descriptions
+        run: node apply-ios-privacy.mjs
       - name: Install Capacitor iOS CocoaPods
         run: |
           cd ios/App
