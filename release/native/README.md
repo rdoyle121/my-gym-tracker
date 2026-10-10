@@ -40,3 +40,14 @@ The `prepare-web.mjs` script stages a copy of `cloud-gym.html` as `dist/index.ht
 - The current app's third-party Supabase JS module CDN remains an online dependency, so this scaffold is **not offline-ready**.
 - Capacitor native WebViews have different origins from GitHub Pages. Review Supabase allowed URLs, CSP/CORS, system-browser navigation, image uploads, location access and notification permissions.
 - The packaged native app requires real device testing before release. Nothing here claims an iOS/Android build was produced.
+
+## Automatic Android test APK (GitHub Actions)
+A workflow at `.github/workflows/android-debug.yml` builds an **Android debug APK**, not a signed store release.
+1. Open **Actions → Android debug APK (test only)** in this GitHub repository.
+2. Run the workflow manually if needed, or check the workflow triggered by updates to native files.
+3. After it succeeds, open its run and download `my-gym-tracker-android-debug-apk` under **Artifacts**. Extract the ZIP to find `app-debug.apk`.
+4. Only install the debug APK on a test Android device you control. Debug APKs are not for public distribution and must not be uploaded as Google Play production packages.
+
+The workflow requires GitHub Actions to be enabled on the repo. The workflow **has not been verified to build successfully yet**, and native sign-in/photo/location behaviour remains untested.
+
+Never enter a production password into an unverified test build unless you trust the source and build. The current app uses real Supabase endpoints, so consider a separate test account.
