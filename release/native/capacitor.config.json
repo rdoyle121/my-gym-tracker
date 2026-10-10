@@ -1,0 +1,9 @@
+{
+  "appId": "com.example.mygymtracker",
+  "appName": "My Gym Tracker",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {}
+}
