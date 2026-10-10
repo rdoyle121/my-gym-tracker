@@ -482,10 +482,10 @@ window.cloudCheck=async()=>{if(!window.cloudGymUser){status('Sign in to check cl
  }
  if(!row&&baseUpdatedAt){conflict();return}
  cloudRowId=row?.id||null;baseUpdatedAt=row?.updated_at||null;lastCloudState=row?copy(incoming):null;
- if(!blocked){if(row){status('✓ Synced with cloud. Automatic updates active.')}else{status('☁️ No cloud backup yet. Uploading this account’s local data…')}}
- }catch(e){status('Could not check cloud: '+e.message)}finally{initializing=false;if(!blocked&&window.cloudGymUser&&!cloudRowId&&window.cloudStatusText?.includes('Uploading this account'))window.cloudScheduleSave?.()}};
+ if(!blocked){if(row){if(same(state,incoming))status('✓ Synced with cloud. Automatic updates active.');else{status('☁️ Local changes are waiting to be backed up…');window.cloudScheduleSave?.()}}else{status('☁️ No cloud backup yet. Uploading this account’s local data…')}}
+ }catch(e){status('Could not check cloud: '+e.message)}finally{initializing=false;if(!blocked&&window.cloudGymUser&&(!cloudRowId||window.cloudStatusText?.includes('waiting to be backed up')))window.cloudScheduleSave?.()}};
 
-function cloudStats(x){return 'Workout sets: '+(x?.logs?.length||0)+'; weigh-ins: '+(x?.bodyWeights?.length||0)+'; gym visits: '+(x?.gymVisits?.length||0)+'; notes: '+Object.keys(x?.workoutNotes||{}).length}
+function cloudStats(x){return 'Logged sets: '+(x?.logs?.length||0)+'; planned exercises: '+Object.values(x?.customDays||{}).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0)+'; weigh-ins: '+(x?.bodyWeights?.length||0)+'; gym visits: '+(x?.gymVisits?.length||0)+'; notes: '+Object.keys(x?.workoutNotes||{}).length}
 window.cloudInspect=async()=>{if(!window.cloudGymUser)return;try{status('Comparing both copies without changing either…');const row=await cloudRow(),local=copy(state),remote=row?.data?.state?copy(row.data.state):null;
  const names={customDays:'planned exercises',dayDetails:'workout names and times',personalSchedule:'custom weekly schedule',logs:'completed workout sets',workoutNotes:'workout notes',bodyWeights:'weigh-ins'};
  const keys=[...new Set([...Object.keys(local),...Object.keys(remote||{})])];const different=keys.filter(k=>!same(local[k]??null,remote?.[k]??null));
@@ -580,7 +580,7 @@ window.cloudSaveNow=async()=>{if(!window.cloudGymUser){status('Sign in first.');
 window.cloudScheduleSave=()=>{if(blocked||!window.cloudGymUser)return;clearTimeout(queue);queue=setTimeout(autoSave,1600)};
 async function autoSave(){if(syncing||blocked||initializing||!window.cloudGymUser)return;syncing=true;const account=window.cloudGymUser.id,local=copy(state);try{
  const remote=await cloudRow();if(!window.cloudGymUser||window.cloudGymUser.id!==account)return;
- if(remote?.updated_at!==baseUpdatedAt||(!remote&&cloudRowId)){conflict();return}
+ if((remote?.updated_at||null)!==(baseUpdatedAt||null)||(!remote&&cloudRowId)){conflict();return}
  if(remote&&same(local,remote.data.state)){lastCloudState=local;status('✓ Everything is synced.');return}
  const payload={kind:'gym-cloud-snapshot-v1',version:1,savedAt:new Date().toISOString(),state:local};
  let result;if(remote){result=await sb.from('user_settings').update({data:payload,updated_at:new Date().toISOString()}).eq('id',remote.id).eq('user_id',account).eq('updated_at',remote.updated_at).select('id,updated_at').single()}
