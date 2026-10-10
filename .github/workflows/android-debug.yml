@@ -50,6 +50,14 @@ jobs:
       - name: Build unsigned-for-release Android debug APK
         run: ./gradlew assembleDebug --no-daemon
         working-directory: release/native/android
+      - name: Audit Android native configuration
+        run: node audit-native.mjs android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-gym-tracker-android-security-audit
+          path: release/native/audit/android-audit.md
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: my-gym-tracker-android-debug-apk
