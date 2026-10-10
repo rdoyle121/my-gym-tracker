@@ -1,0 +1,59 @@
+name: Android release bundle (unsigned test)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'release/native/**'
+      - 'cloud-gym.html'
+      - 'plan-data.js'
+      - 'assets/**'
+      - '.github/workflows/android-release-bundle.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  unsigned-bundle:
+    name: Build unsigned Android App Bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: release/native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Check Android SDK
+        shell: bash
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
+          test -d "${ANDROID_HOME:-/usr/local/lib/android/sdk}/platform-tools"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Generate Android project
+        run: npm run native:add:android
+      - name: Build unsigned release AAB
+        run: ./gradlew bundleRelease --no-daemon
+        working-directory: release/native/android
+      - name: Audit Android configuration
+        run: node audit-native.mjs android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-gym-tracker-unsigned-release-aab
+          path: release/native/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-gym-tracker-release-audit
+          path: release/native/audit/android-audit.md
+          if-no-files-found: error
+          retention-days: 7
