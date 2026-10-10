@@ -326,7 +326,7 @@ function renderFood(){const section=weekdays[new Date().getDay()];
  return '<div class="food-accordion">'+foodDropdown('meals','🍽️ Food plan',meals,esc(section))+foodDropdown('supplements','💊 Supplements',supp)+foodDropdown('portions','📏 Food preparation & portions',portions)+foodDropdown('prep','🐟 Chicken & salmon preparation',prep)+foodDropdown('shopping','🛒 Shopping checklist',shopping)+'</div>';
 }
 function toggleShop(i){state.shoppingChecked=state.shoppingChecked.includes(i)?state.shoppingChecked.filter(x=>x!==i):[...state.shoppingChecked,i];save();render()}
-function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync — TEST <small style="font-size:11px;color:#aab">v6</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
+function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync — TEST <small style="font-size:11px;color:#aab">v7</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><div id="cloud-recovery" style="margin-top:12px"><button class="secondary full" onclick="window.cloudReview?.()">🔎 Review local and cloud copies</button></div><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
 function renderSettings(){return `${renderCloudControls()}${renderGymCheckin()}${renderGymLocator()}${renderNoticeSettings()}<div class="card"><h2>Your data & backups</h2><p class="muted">Your logs stay in this browser on this device. They are not sent to a server.</p><div class="stack"><button class="primary" onclick="exportData()">⬇ Export backup (JSON)</button><label for="import">Import a previous backup</label><input class="field" type="file" id="import" accept=".json,application/json" onchange="importData(this)"><button class="secondary danger" onclick="clearData()">Clear my saved data</button></div></div><div class="card"><h3>Install on iPhone</h3><p>Once the app files are hosted on an HTTPS website, open the link in <b>Safari</b>, tap <b>Share</b>, then <b>Add to Home Screen</b>.</p><p class="muted tiny">Opening index.html directly from Files is not a dependable installation method; for reliable saving and offline use, host the app first (for example with free GitHub Pages).</p></div>`}
 
 /* Private visits saved in the same local backup as workouts. Only a user's
@@ -478,6 +478,27 @@ window.cloudCheck=async()=>{if(!window.cloudGymUser){status('Sign in to check cl
  cloudRowId=row?.id||null;baseUpdatedAt=row?.updated_at||null;lastCloudState=row?copy(incoming):null;
  if(!blocked)status(row?'✓ Synced with cloud. Automatic updates active.':'✓ Ready — your first edit will create a cloud backup.');
  }catch(e){status('Could not check cloud: '+e.message)}finally{initializing=false}};
+
+function cloudStats(x){return 'Workout sets: '+(x?.logs?.length||0)+'; weigh-ins: '+(x?.bodyWeights?.length||0)+'; gym visits: '+(x?.gymVisits?.length||0)+'; notes: '+Object.keys(x?.workoutNotes||{}).length}
+window.cloudReview=async()=>{if(!window.cloudGymUser)return;try{status('Reading both versions…');const row=await cloudRow();if(!row){status('No cloud snapshot exists yet. Your local records are unchanged.');return}if(!row.data?.state||!Array.isArray(row.data.state.logs)){status('Cloud record is not a valid snapshot. No changes made.');return}
+ const local=copy(state),remote=row.data.state;
+ const detail='LOCAL on this device: '+cloudStats(local)+'\\nCLOUD saved '+(row.data.savedAt||'unknown date')+': '+cloudStats(remote);
+ status(detail.replace(/\\n/g,' | '));
+ if(same(local,remote)){cloudRowId=row.id;baseUpdatedAt=row.updated_at;lastCloudState=copy(remote);blocked=false;status('✓ Local and cloud data match. Sync resumed.');return}
+ if(!confirm(detail+'\\n\\nYou can download a safety backup first. Press OK to review recovery options.'))return;
+ const choice=prompt('Type LOCAL to preserve this device and upload it, CLOUD to load the online copy, or CANCEL. Both versions should be exported first.','CANCEL');
+ if(!choice||choice.toUpperCase()==='CANCEL')return;
+ if(!['LOCAL','CLOUD'].includes(choice.toUpperCase())){status('No change. Invalid choice.');return}
+ const a=document.createElement('a'),blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),local,cloud:remote,cloudSavedAt:row.data.savedAt},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob);
+ a.href=url;a.download='my-gym-conflict-backup-'+Date.now()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ if(!confirm('A backup download was requested. Verify that it saved successfully before proceeding. Continue with '+choice.toUpperCase()+'?'))return;
+ if(choice.toUpperCase()==='CLOUD'){state={...state,...copy(remote)};localStorage.setItem(K,JSON.stringify(state));cloudRowId=row.id;baseUpdatedAt=row.updated_at;lastCloudState=copy(remote);blocked=false;render();status('✓ Loaded cloud copy. Automatic syncing resumed.');return}
+ const fresh=await cloudRow();if(fresh?.updated_at!==row.updated_at){conflict();return}
+ const payload={kind:'gym-cloud-snapshot-v1',version:1,savedAt:new Date().toISOString(),state:copy(local)};
+ const {data,error}=await sb.from('user_settings').update({data:payload,updated_at:new Date().toISOString()}).eq('id',row.id).eq('user_id',window.cloudGymUser.id).eq('updated_at',row.updated_at).select('id,updated_at').maybeSingle();
+ if(error||!data){conflict();return}
+ cloudRowId=data.id;baseUpdatedAt=data.updated_at;lastCloudState=copy(local);blocked=false;status('✓ Uploaded local copy. Automatic syncing resumed.');
+ }catch(e){status('Recovery stopped: '+e.message+'. Your local data remains available.')}};
 window.cloudScheduleSave=()=>{if(blocked||!window.cloudGymUser)return;clearTimeout(queue);queue=setTimeout(autoSave,1600)};
 async function autoSave(){if(syncing||blocked||initializing||!window.cloudGymUser)return;syncing=true;const account=window.cloudGymUser.id,local=copy(state);try{
  const remote=await cloudRow();if(!window.cloudGymUser||window.cloudGymUser.id!==account)return;
