@@ -61,3 +61,6 @@ For a real iPhone test you will need an Apple signing team, an owned bundle iden
 
 ## MG icon in iOS builds
 The iOS CI workflow runs `npm run native:brand:ios` after generating the Capacitor iOS project. This creates an opaque 1024×1024 AppIcon PNG from the repository's existing `icon.svg` and replaces the generated iOS AppIcon asset catalog. The icon artwork is not a replacement for a signed device build or store review. If building locally on a Mac, run this command after `npm run native:add:ios`.
+
+## iOS permission prompts
+The iOS CI build runs `node apply-ios-privacy.mjs` after generating the iOS project. It adds camera, photo-library and when-in-use location usage descriptions to the generated `Info.plist`. These do not grant permissions automatically; iOS still asks the person before access, when the relevant API is used. Test these flows on a physical iPhone before release. The app's existing browser photo-picker may not invoke every native permission. Review final App Store privacy disclosures and remove any unused purpose strings before submitting.
