@@ -1,0 +1,21 @@
+{
+  "name": "my-gym-tracker-native",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Development-only native shell for My Gym Tracker Cloud",
+  "scripts": {
+    "android:add": "cap add android",
+    "ios:add": "cap add ios",
+    "sync": "cap sync",
+    "android:open": "cap open android",
+    "ios:open": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}
