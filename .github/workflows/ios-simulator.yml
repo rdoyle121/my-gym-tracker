@@ -36,6 +36,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Stage web assets and add iOS project
         run: npm run native:add:ios
+      - name: Apply MG iOS app icon
+        run: npm run native:brand:ios
       - name: Install Capacitor iOS CocoaPods
         run: |
           cd ios/App
