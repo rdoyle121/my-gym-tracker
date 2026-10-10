@@ -51,3 +51,10 @@ A workflow at `.github/workflows/android-debug.yml` builds an **Android debug AP
 The workflow requires GitHub Actions to be enabled on the repo. The workflow **has not been verified to build successfully yet**, and native sign-in/photo/location behaviour remains untested.
 
 Never enter a production password into an unverified test build unless you trust the source and build. The current app uses real Supabase endpoints, so consider a separate test account.
+
+## iOS simulator build (GitHub Actions)
+The workflow `.github/workflows/ios-simulator.yml` generates an **unsigned simulator-only .app** on a macOS GitHub runner. It does not create an installable iPhone IPA or App Store release.
+
+To review the run, open **Actions → iOS simulator build (test only)**. If it succeeds, the artifact is `my-gym-tracker-ios-simulator`, containing a zipped simulator .app. It can be installed into a compatible Xcode simulator after extraction, **not directly onto an iPhone**.
+
+For a real iPhone test you will need an Apple signing team, an owned bundle identifier, Xcode/native provisioning, a development or TestFlight distribution build, and device testing. Do not provide Apple credentials or signing secrets in chat. The native iOS build has not been validated yet.
