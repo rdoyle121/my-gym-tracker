@@ -3,7 +3,7 @@
 This **separate Capacitor project** is a starter for compiling the cloud tracker for iOS and Android. It does not modify the original `index.html` tracker or deploy to GitHub Pages.
 
 ## Before you build
-- Replace `com.example.mygymtracker` in `capacitor.config.json` with an app ID you own **before** generating native projects; changing it afterwards is disruptive.
+- Proposed native bundle/application ID: `com.rdoyle121.mygymtracker`. Confirm store availability and your right to use the identifier before publishing. It replaces the testing placeholder; app IDs are difficult to change after release. Existing APKs with the old ID are treated by Android as separate apps, not in-place updates.
 - Confirm rights to the existing MG artwork and photographs.
 - The app currently loads Supabase JS from a CDN and makes network requests to Supabase, image hosts and optional OpenStreetMap services. Packaging does **not** make it fully offline.
 - Password-reset emails from the native build are configured to return to the **hosted cloud website**, not a native deep link. Users can complete recovery in their browser and then log into the native app. Confirm this flow and allowlist the hosted redirect URL in Supabase Authentication settings. Sign-up confirmation, location/notification permissions, secure storage, account deletion, and external URLs still require native WebView testing.
