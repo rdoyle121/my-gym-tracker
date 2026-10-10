@@ -59,3 +59,8 @@ Syncing requires internet access. Exercise and nutrition data are entered by use
 - Current install PNG: mg-rendered-icon.png (manifest currently declares 120x120; full-size exported app-store icons still needed)
 
 This document is drafting material, not a claim that store requirements have been met.
+
+## Public account deletion information
+- Instructions URL (pre-release): https://rdoyle121.github.io/my-gym-tracker/cloud-delete-account.html
+- In-app action: More → Account & Security → Delete My Account (requires authenticated user and explicit confirmation)
+- The informational page is not an unauthenticated deletion request service. Before public launch, verify current Apple/Google requirements and add a support route for users unable to sign in.
