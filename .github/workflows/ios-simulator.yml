@@ -1,0 +1,51 @@
+name: iOS simulator build (test only)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'release/native/**'
+      - 'cloud-gym.html'
+      - 'plan-data.js'
+      - 'assets/**'
+      - 'cloud-manifest.webmanifest'
+      - 'cloud-privacy.html'
+      - 'icon.svg'
+      - 'mg-rendered-icon.png'
+      - '.github/workflows/ios-simulator.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ios-simulator:
+    name: Build iOS simulator app
+    runs-on: macos-15
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: release/native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: Install native dependencies
+        run: npm install --no-audit --no-fund
+      - name: Stage web assets and add iOS project
+        run: npm run native:add:ios
+      - name: Build unsigned iOS simulator app
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/mygym-ios-build" CODE_SIGNING_ALLOWED=NO build
+      - name: Package simulator .app
+        run: |
+          cd "$RUNNER_TEMP/mygym-ios-build/Build/Products/Debug-iphonesimulator"
+          ditto -c -k --sequesterRsrc --keepParent App.app "$RUNNER_TEMP/my-gym-tracker-ios-simulator.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-gym-tracker-ios-simulator
+          path: ${{ runner.temp }}/my-gym-tracker-ios-simulator.zip
+          if-no-files-found: error
+          retention-days: 7
