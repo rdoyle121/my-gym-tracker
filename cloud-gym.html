@@ -326,7 +326,7 @@ function renderFood(){const section=weekdays[new Date().getDay()];
  return '<div class="food-accordion">'+foodDropdown('meals','🍽️ Food plan',meals,esc(section))+foodDropdown('supplements','💊 Supplements',supp)+foodDropdown('portions','📏 Food preparation & portions',portions)+foodDropdown('prep','🐟 Chicken & salmon preparation',prep)+foodDropdown('shopping','🛒 Shopping checklist',shopping)+'</div>';
 }
 function toggleShop(i){state.shoppingChecked=state.shoppingChecked.includes(i)?state.shoppingChecked.filter(x=>x!==i):[...state.shoppingChecked,i];save();render()}
-function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync — TEST <small style="font-size:11px;color:#aab">v10</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><div id="cloud-recovery" style="margin-top:12px"><button class="secondary full" onclick="window.cloudReview?.()">🔎 Review local and cloud copies</button><button class="secondary full" onclick="window.cloudMerge?.()">🔀 Merge unique workout sets (safe preview)</button><div id="cloud-conflict-detail">'+(window.cloudConflictDetails||'')+'</div></div><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
+function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync — TEST <small style="font-size:11px;color:#aab">v11</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><div id="cloud-recovery" style="margin-top:12px"><button class="secondary full" onclick="window.cloudReview?.()">🔎 Review local and cloud copies</button><button class="secondary full" onclick="window.cloudMerge?.()">🔀 Merge unique workout sets (safe preview)</button><button class="secondary danger full" onclick="window.cloudKeepOne?.()">🧹 Reset test workouts to 1 confirmed set</button><div id="cloud-conflict-detail">'+(window.cloudConflictDetails||'')+'</div></div><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
 function renderSettings(){return `${renderCloudControls()}${renderGymCheckin()}${renderGymLocator()}${renderNoticeSettings()}<div class="card"><h2>Your data & backups</h2><p class="muted">Your logs stay in this browser on this device. They are not sent to a server.</p><div class="stack"><button class="primary" onclick="exportData()">⬇ Export backup (JSON)</button><label for="import">Import a previous backup</label><input class="field" type="file" id="import" accept=".json,application/json" onchange="importData(this)"><button class="secondary danger" onclick="clearData()">Clear my saved data</button></div></div><div class="card"><h3>Install on iPhone</h3><p>Once the app files are hosted on an HTTPS website, open the link in <b>Safari</b>, tap <b>Share</b>, then <b>Add to Home Screen</b>.</p><p class="muted tiny">Opening index.html directly from Files is not a dependable installation method; for reliable saving and offline use, host the app first (for example with free GitHub Pages).</p></div>`}
 
 /* Private visits saved in the same local backup as workouts. Only a user's
@@ -534,6 +534,34 @@ window.cloudMerge=async()=>{if(!window.cloudGymUser)return;const account=window.
  state=merged.state;localStorage.setItem(K,JSON.stringify(state));cloudRowId=data.id;baseUpdatedAt=data.updated_at;lastCloudState=copy(state);blocked=false;render();
  status('✓ Merged successfully: '+state.logs.length+' sets. Cloud and local data match. Automatic syncing resumed.');
  }catch(e){status('Merge stopped safely: '+e.message+'. Existing local data was not changed.')}};
+
+window.cloudKeepOne=async()=>{if(!window.cloudGymUser)return;
+ const account=window.cloudGymUser.id,local=copy(state);
+ if(!Array.isArray(local.logs)){status('Invalid local workout records. No changes made.');return}
+ try{
+ status('Checking online copy before cleanup…');
+ const row=await cloudRow();
+ if(!row?.data?.state||!Array.isArray(row.data.state.logs)){status('Cloud snapshot missing or invalid. No changes made.');return}
+ const remote=copy(row.data.state);
+ const target={date:'2026-10-10',day:'MONDAY',exercise:'Machine chest press',set:1,weight:20,reps:10,done:true};
+ const match=x=>x.date===target.date&&x.day===target.day&&x.exercise===target.exercise&&Number(x.set)===1&&Number(x.weight)===20&&Number(x.reps)===10&&x.done===true;
+ if(!local.logs.some(match)){status('Confirmed 20 kg set not found locally. Cleanup stopped.');return}
+ const keep=copy(local.logs.find(match));
+ if(!confirm('TEST WORKOUT CLEANUP: Keep ONLY Machine chest press Set 1 (20 kg × 10) on 2026-10-10. Remove the other '+(local.logs.length-1)+' local set(s) and '+remote.logs.length+' cloud set(s) from this account snapshot? This does not touch your original app.'))return;
+ downloadConflictBackup(local,remote);
+ if(!confirm('Make sure the safety JSON backup downloaded successfully. Confirm that you want exactly ONE test set in both this device and your cloud snapshot.'))return;
+ if(!window.cloudGymUser||window.cloudGymUser.id!==account||!same(state,local)){status('Local data changed during cleanup. No changes made.');return}
+ const fresh=await cloudRow();
+ if(fresh?.id!==row.id||fresh?.updated_at!==row.updated_at){conflict();return}
+ const next={...local,logs:[keep]};
+ const payload={kind:'gym-cloud-snapshot-v1',version:1,savedAt:new Date().toISOString(),state:copy(next)};
+ const {data,error}=await sb.from('user_settings').update({data:payload,updated_at:new Date().toISOString()}).eq('id',row.id).eq('user_id',account).eq('updated_at',row.updated_at).select('id,updated_at').maybeSingle();
+ if(error)throw error;
+ if(!data){conflict();return}
+ state=next;localStorage.setItem(K,JSON.stringify(state));
+ cloudRowId=data.id;baseUpdatedAt=data.updated_at;lastCloudState=copy(state);blocked=false;window.cloudConflictDetails='';
+ render();status('✓ Test cleanup complete. 1 local set and 1 cloud snapshot set: Machine chest press 20 kg × 10. Other tracking categories were preserved.');
+ }catch(e){status('Cleanup failed: '+e.message+'. Local records were not replaced.')}};
 window.cloudScheduleSave=()=>{if(blocked||!window.cloudGymUser)return;clearTimeout(queue);queue=setTimeout(autoSave,1600)};
 async function autoSave(){if(syncing||blocked||initializing||!window.cloudGymUser)return;syncing=true;const account=window.cloudGymUser.id,local=copy(state);try{
  const remote=await cloudRow();if(!window.cloudGymUser||window.cloudGymUser.id!==account)return;
