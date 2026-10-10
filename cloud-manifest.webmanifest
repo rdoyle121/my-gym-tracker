@@ -1,0 +1,25 @@
+{
+  "name": "My Gym Tracker — Cloud",
+  "short_name": "Gym Tracker Cloud",
+  "description": "Your private workouts, nutrition and progress photos, synced with your account.",
+  "id": "./cloud-gym.html",
+  "start_url": "./cloud-gym.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#09090d",
+  "theme_color": "#09090d",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./mg-rendered-icon.png",
+      "sizes": "120x120",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
