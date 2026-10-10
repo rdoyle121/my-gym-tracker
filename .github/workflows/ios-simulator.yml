@@ -38,7 +38,12 @@ jobs:
         run: npm run native:add:ios
       - name: Build unsigned iOS simulator app
         run: |
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/mygym-ios-build" CODE_SIGNING_ALLOWED=NO build
+          set -o pipefail
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/mygym-ios-build" CODE_SIGNING_ALLOWED=NO ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO build 2>&1 | tee "$RUNNER_TEMP/mygym-xcodebuild.log" || {
+            echo "==== Xcode errors (first 80 matches) ===="
+            grep -nE 'error:|fatal error:|BUILD FAILED|SwiftEmitModule|GeneratedAssetSymbols.swift' "$RUNNER_TEMP/mygym-xcodebuild.log" | head -80 || true
+            exit 1
+          }
       - name: Package simulator .app
         run: |
           cd "$RUNNER_TEMP/mygym-ios-build/Build/Products/Debug-iphonesimulator"
