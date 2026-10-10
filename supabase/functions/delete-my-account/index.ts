@@ -29,7 +29,7 @@ Deno.serve(async req => {
     for(let i=0;i<paths.length;i+=100){const {error}=await bucket.remove(paths.slice(i,i+100));if(error)throw new Error('Could not delete private photos: '+error.message)}
     // Delete per-user table rows before deleting the authentication identity.
     // Explicit inventory from the read-only public table audit. Stop on any failure.
-    for(const table of ['body_measurement','body_weights','gym_favourites','gym_visits','nutrition_plans','personal_records','profiles','shopping_lists','user_settings','workout_logs','workout_notes','workout_plans']){
+    for(const table of ['body_measurements','body_weights','gym_favourites','gym_visits','nutrition_plans','personal_records','profiles','shopping_lists','user_settings','workout_logs','workout_notes','workout_plans']){
       stage='delete-table:'+table;
       const {error}=await admin.from(table).delete().eq('user_id',user.id);
       if(error)throw new Error('Could not remove account records: '+table+' ('+error.message+')');
