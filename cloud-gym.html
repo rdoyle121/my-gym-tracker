@@ -467,7 +467,7 @@ window.cloudCheck=async()=>{if(!window.cloudGymUser||syncing||initializing)retur
  const row=await cloudRow();const incoming=row?.data?.state;
  if(row&&(!incoming||!Array.isArray(incoming.logs)||!Array.isArray(incoming.bodyWeights)))throw Error('Invalid cloud snapshot');
  if(row&&baseUpdatedAt===null){
-   if(!same(state,incoming)&&state.logs.length===0&&state.bodyWeights.length===0&&(!state.gymVisits||!state.gymVisits.length)&&(!state.manualPRs||!state.manualPRs.length)){
+   if(!same(state,incoming)&&same(state,{logs:[],bodyWeights:[],shoppingChecked:[],selectedDay:null,customDays:{},workoutNotes:{},gymVisits:[],gymActive:null,manualPRs:[],bodyMeasurements:[],favoriteGyms:[]})){
      state={...state,...incoming};localStorage.setItem(K,JSON.stringify(state));render();
    }else if(!same(state,incoming)){conflict();return}
  }else if(row&&baseUpdatedAt&&row.updated_at!==baseUpdatedAt){
@@ -494,4 +494,7 @@ window.cloudLogout=async()=>{clearTimeout(queue);if(!blocked&&!same(state,lastCl
 document.getElementById('cloud-login-form').addEventListener('submit',async e=>{e.preventDefault();msg('Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById('cloud-email').value.trim(),password:document.getElementById('cloud-password').value});document.getElementById('cloud-password').value='';if(error){msg(error.message);return}try{scope(data.user)}catch(err){msg('Signed in, but dashboard could not load: '+err.message);console.error(err)}});
 const {data}=await sb.auth.getUser();if(data?.user)scope(data.user);else lock();
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')lock()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&window.cloudGymUser&&!blocked)window.cloudCheck()});
+window.addEventListener('online',()=>{if(window.cloudGymUser&&!blocked){window.cloudCheck().then(()=>{if(!same(state,lastCloudState))window.cloudScheduleSave()})}});
+setInterval(()=>{if(!document.hidden&&window.cloudGymUser&&!blocked)window.cloudCheck()},45000);
 </script></body></html>
