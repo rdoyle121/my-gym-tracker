@@ -64,3 +64,6 @@ The iOS CI workflow runs `npm run native:brand:ios` after generating the Capacit
 
 ## iOS permission prompts
 The iOS CI build runs `node apply-ios-privacy.mjs` after generating the iOS project. It adds camera, photo-library and when-in-use location usage descriptions to the generated `Info.plist`. These do not grant permissions automatically; iOS still asks the person before access, when the relevant API is used. Test these flows on a physical iPhone before release. The app's existing browser photo-picker may not invoke every native permission. Review final App Store privacy disclosures and remove any unused purpose strings before submitting.
+
+## Android release bundle (unsigned, not uploadable to Google Play)
+The workflow `.github/workflows/android-release-bundle.yml` runs `./gradlew bundleRelease` and uploads an **unsigned** Android App Bundle (`.aab`). This is for validating the release build process, not for store submission or phone installation. Release signing, a securely backed-up upload key, versionCode/versionName management, store declarations, Play Console access and a review of all dependencies and permissions remain required. Never add a keystore, keystore passwords or Play credentials to GitHub source control. The workflow has not yet been confirmed to pass.
