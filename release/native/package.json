@@ -1,0 +1,22 @@
+{
+  "name": "my-gym-tracker-native",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pre-release Capacitor wrapper for the My Gym Tracker cloud app",
+  "scripts": {
+    "prepare:web": "node prepare-web.mjs",
+    "native:add:android": "npm run prepare:web && npx cap add android",
+    "native:add:ios": "npm run prepare:web && npx cap add ios",
+    "native:sync": "npm run prepare:web && npx cap sync",
+    "native:open:android": "npx cap open android",
+    "native:open:ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  }
+}
