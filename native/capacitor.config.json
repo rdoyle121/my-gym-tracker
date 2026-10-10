@@ -1,0 +1,12 @@
+{
+  "appId": "com.mygymtracker.cloud",
+  "appName": "My Gym Tracker",
+  "webDir": "www",
+  "server": {
+    "url": "https://rdoyle121.github.io/my-gym-tracker/cloud-gym.html",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
