@@ -34,7 +34,15 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v3
+      # GitHub-hosted Ubuntu runners already include Android SDK command-line tools.
+      # Avoid setup-android@v3's failing sdkmanager package refresh.
+      - name: Configure preinstalled Android SDK
+        shell: bash
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
+          test -d "${ANDROID_HOME:-/usr/local/lib/android/sdk}/platform-tools"
+          echo "Using preinstalled Android SDK"
       - name: Install native project dependencies
         run: npm install --no-audit --no-fund
       - name: Stage cloud assets and generate Android project
