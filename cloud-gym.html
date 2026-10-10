@@ -473,7 +473,7 @@ window.cloudCheck=async()=>{if(!window.cloudGymUser){status('Sign in to check cl
  const row=await cloudRow();const incoming=row?.data?.state;
  if(row&&(!incoming||!Array.isArray(incoming.logs)||!Array.isArray(incoming.bodyWeights)))throw Error('Invalid cloud snapshot');
  if(row&&baseUpdatedAt===null){
-   if(!same(state,incoming)&&same(state,{logs:[],bodyWeights:[],shoppingChecked:[],selectedDay:null,customDays:{},workoutNotes:{},gymVisits:[],gymActive:null,manualPRs:[],bodyMeasurements:[],favoriteGyms:[]})){
+   if(!same(state,incoming)&&(!localStorage.getItem(K)||same(state,{logs:[],bodyWeights:[],shoppingChecked:[],selectedDay:null,customDays:{},workoutNotes:{},gymVisits:[],gymActive:null,manualPRs:[],bodyMeasurements:[],favoriteGyms:[]}))){
      state={...state,...incoming};localStorage.setItem(K,JSON.stringify(state));render();
    }else if(!same(state,incoming)){conflict();return}
  }else if(row&&baseUpdatedAt&&row.updated_at!==baseUpdatedAt){
