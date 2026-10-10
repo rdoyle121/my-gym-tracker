@@ -24,10 +24,10 @@ Deno.serve(async req => {
     while(true){const {data,error}=await bucket.list(user.id,{limit:100,offset});if(error)throw new Error('Could not list private photos: '+error.message);for(const x of data||[])if(x.name&&!x.name.startsWith('.'))paths.push(user.id+'/'+x.name);if(!data||data.length<100)break;offset+=100;if(offset>100000)throw new Error('Too many files to safely delete')}
     for(let i=0;i<paths.length;i+=100){const {error}=await bucket.remove(paths.slice(i,i+100));if(error)throw new Error('Could not delete private photos: '+error.message)}
     // Delete per-user table rows before deleting the authentication identity.
-    // Missing optional tables are ignored; all other database errors stop deletion.
-    for(const table of ['workout_logs','user_settings','workout_plans','profiles','body_weights','body_measurements','workout_notes']){
+    // Explicit inventory from the read-only public table audit. Stop on any failure.
+    for(const table of ['body_measurement','body_weights','gym_favourites','gym_visits','nutrition_plans','personal_records','profiles','shopping_lists','user_settings','workout_logs','workout_notes','workout_plans']){
       const {error}=await admin.from(table).delete().eq('user_id',user.id);
-      if(error&&error.code!=='42P01')throw new Error('Could not remove account records: '+table+' ('+error.message+')');
+      if(error)throw new Error('Could not remove account records: '+table+' ('+error.message+')');
     }
     const {error:deleteError}=await admin.auth.admin.deleteUser(user.id);
     if(deleteError)throw new Error('Could not remove account identity: '+deleteError.message);
