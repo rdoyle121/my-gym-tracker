@@ -58,3 +58,6 @@ The workflow `.github/workflows/ios-simulator.yml` generates an **unsigned simul
 To review the run, open **Actions → iOS simulator build (test only)**. If it succeeds, the artifact is `my-gym-tracker-ios-simulator`, containing a zipped simulator .app. It can be installed into a compatible Xcode simulator after extraction, **not directly onto an iPhone**.
 
 For a real iPhone test you will need an Apple signing team, an owned bundle identifier, Xcode/native provisioning, a development or TestFlight distribution build, and device testing. Do not provide Apple credentials or signing secrets in chat. The native iOS build has not been validated yet.
+
+## MG icon in iOS builds
+The iOS CI workflow runs `npm run native:brand:ios` after generating the Capacitor iOS project. This creates an opaque 1024×1024 AppIcon PNG from the repository's existing `icon.svg` and replaces the generated iOS AppIcon asset catalog. The icon artwork is not a replacement for a signed device build or store review. If building locally on a Mac, run this command after `npm run native:add:ios`.
