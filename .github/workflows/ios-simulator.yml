@@ -56,6 +56,14 @@ jobs:
         run: |
           cd "$RUNNER_TEMP/mygym-ios-build/Build/Products/Debug-iphonesimulator"
           ditto -c -k --sequesterRsrc --keepParent App.app "$RUNNER_TEMP/my-gym-tracker-ios-simulator.zip"
+      - name: Audit iOS native configuration
+        run: node audit-native.mjs ios
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-gym-tracker-ios-security-audit
+          path: release/native/audit/ios-audit.md
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: my-gym-tracker-ios-simulator
