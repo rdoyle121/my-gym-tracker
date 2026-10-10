@@ -1,5 +1,5 @@
 {
-  "appId": "com.example.mygymtracker",
+  "appId": "com.rdoyle121.mygymtracker",
   "appName": "My Gym Tracker",
   "webDir": "dist",
   "server": {
