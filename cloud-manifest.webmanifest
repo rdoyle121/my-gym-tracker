@@ -10,10 +10,10 @@
   "theme_color": "#09090d",
   "icons": [
     {
-      "src": "./cloud-icon.svg",
+      "src": "./icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "./mg-rendered-icon.png",
