@@ -394,9 +394,9 @@ rows[9][1]='200g Greek-style yoghurt + 1 banana';
 }
 if(i===4){
 rows[5]=['8:00 pm','150g raw chicken breast + 350g raw new potatoes + 150g veg'];
-rows[6]=['9:45 pm','1 banana OR 2 slices wholemeal toast'];
-rows[7]=['10:30–10:45 pm','Gym'];
-rows[9]=['11:45 pm','2 eggs + 2 slices toast OR 200g yoghurt + 50g oats'];
+rows[6]=['11:15 pm','1 banana OR 2 slices wholemeal toast'];
+rows[7]=['12:30 am','Gym'];
+rows[9]=['Post-gym','2 eggs + 2 slices toast OR 200g yoghurt + 50g oats'];
 }
 if(i>=5){
 rows=[
@@ -411,6 +411,16 @@ rows=[
 return {day,meals:rows.map(([time,item])=>({time,item}))};
 });
 const weeklyMealPreset={id:'chicken-salmon-microwave-rice-2026',title:'Chicken Breast + Salmon — Microwave Rice',days:weeklyMealPresetDays};
+function nutritionUpdateFridayGymTimes(){
+const n=nutritionEdit(),fri=n.weeklyMealPlan?.days?.find(d=>d.day==='FRIDAY');
+if(!fri||!Array.isArray(fri.meals)){alert('Import a weekly plan first to update Friday.');return}
+const updates=[['9:45 pm','11:15 pm','1 banana OR 2 slices wholemeal toast'],['10:30–10:45 pm','12:30 am','Gym'],['11:45 pm','Post-gym','2 eggs + 2 slices toast OR 200g yoghurt + 50g oats']];
+let count=0;
+const replacements=fri.meals.map(m=>{const update=updates.find(([old,newTime,item])=>m?.time===old&&m?.item===item);if(!update)return m;count++;return {...m,time:update[1]}});
+if(!count){alert('No original Friday gym times found to update. Your customised entries were left unchanged.');return}
+if(!confirm('Update '+count+' Friday meal/gym times to the 12:30 AM schedule? Other meals, checkmarks and food logs will be preserved.'))return;
+fri.meals=replacements;save();render();alert('Friday schedule updated. '+count+' time entries changed.');
+}
 function nutritionImportWeeklyPlan(){if(!confirm('Import the updated Chicken Breast + Salmon weekly plan with 200g cooked microwave rice per rice meal? This replaces your current weekly plan but keeps shopping items and food logs unchanged.'))return;const n=nutritionEdit();n.weeklyMealPlan=JSON.parse(JSON.stringify(weeklyMealPreset));save();render()}
 function nutritionAddWeeklyMeal(day){const text=prompt('Add a meal or note for '+day);if(!text||!text.trim())return;const time=prompt('Time (optional)','');if(time===null)return;const n=nutritionEdit();n.weeklyMealPlan||={id:'custom',title:'My weekly meal plan',days:WEEKLY_DAYS.map(day=>({day,meals:[]}))};const d=n.weeklyMealPlan.days.find(x=>x.day===day);if(!d)return;d.meals.push({time:time.slice(0,35),item:text.trim().slice(0,250)});save();render()}
 function nutritionRemoveWeeklyMeal(day,index){if(!confirm('Remove this meal from your weekly plan?'))return;const n=nutritionEdit(),d=n.weeklyMealPlan?.days?.find(x=>x.day===day);if(!d||!d.meals[index])return;d.meals.splice(index,1);save();render()}
@@ -418,7 +428,7 @@ function weeklyMealWeekKey(){const d=new Date();d.setHours(12,0,0,0);d.setDate(d
 function nutritionCheckWeeklyMeal(day,index,checked,el){const n=nutritionEdit();n.weeklyMealChecks||={};const week=weeklyMealWeekKey();n.weeklyMealChecks[week]||={};const key=day+':'+index;if(checked)n.weeklyMealChecks[week][key]=true;else delete n.weeklyMealChecks[week][key];const row=el?.closest('.meal');if(row){const label=row.querySelector('.weekly-meal-text');if(label){label.style.textDecoration=checked?'line-through':'none';label.style.opacity=checked?'.55':'1'}}save()}
 function renderWeeklyMealPlanCard(){
 const n=nutritionData(),plan=n.weeklyMealPlan,week=weeklyMealWeekKey(),checks=n.weeklyMealChecks?.[week]||{};
-let out='<section class="card"><div class="row"><h2>🗓️ Weekly meal plan</h2><button class="primary" onclick="nutritionImportWeeklyPlan()">⬇ Import plan</button></div><p class="muted tiny">Import the Chicken Breast + Salmon plan with 200g cooked microwave long-grain rice at each rice meal for Monday to Sunday. Meal times and quantities are shown as provided. Your food logs and saved favourites are not removed.</p>';
+let out='<section class="card"><div class="row"><h2>🗓️ Weekly meal plan</h2><button class="primary" onclick="nutritionImportWeeklyPlan()">⬇ Import plan</button><button class="secondary" onclick="nutritionUpdateFridayGymTimes()">🕒 Update Friday times</button></div><p class="muted tiny">Import the Chicken Breast + Salmon plan with 200g cooked microwave long-grain rice at each rice meal for Monday to Sunday. Meal times and quantities are shown as provided. Your food logs and saved favourites are not removed.</p>';
 if(!plan){out+='<p class="muted tiny">No weekly plan imported yet. You can import the premade plan or add meals to a day below.</p>'}
 for(const day of WEEKLY_DAYS){
 const meals=plan?.days?.find(x=>x.day===day)?.meals||[];
