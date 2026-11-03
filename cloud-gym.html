@@ -103,7 +103,7 @@ main{padding:0 15px 12px}
 .cal-day.scheduled.cal-saturday:after,.cal-day.scheduled.cal-sunday:after{background:#b38bff}
 .cal-key{line-height:1.8}
 body.cloud-locked>header,body.cloud-locked>main,body.cloud-locked>nav{display:none!important}.cloud-login-shell{min-height:90dvh;display:grid;place-items:center;padding:16px}.cloud-login-card{max-width:400px;width:100%;background:#191b25;border:1px solid #793548;border-radius:18px;padding:24px}.cloud-login-card input{width:100%;margin:7px 0 14px}.cloud-login-card label{display:block;font-size:13px}.cloud-login-card .primary{width:100%}.cloud-login-card .muted{margin:12px 0}.cloud-login-card button{margin-top:10px}[hidden]{display:none!important}body:not(.cloud-locked) #cloud-login-shell{display:none!important}.cloud-auth-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:15px}.cloud-auth-modes button{padding:9px 3px;font-size:12px}.cloud-auth-modes .active{background:#6a2337;border-color:#ff526b}[hidden]{display:none!important}.days{display:flex;overflow-x:auto;gap:6px}.days .daybtn{flex:0 0 auto;min-width:44px}.toolbar{flex-wrap:wrap}.toolbar button{min-width:0}#cloud-recovery button{margin-top:8px}@media(max-width:640px){.toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.toolbar button{width:100%;white-space:normal}.toolbar .primary{grid-column:1/-1}.card .row{flex-wrap:wrap;gap:8px}.card .row>button{max-width:100%}.photo-grid{grid-template-columns:1fr}#cloud-recovery summary{font-size:13px}} @media(display-mode:standalone){.cloud-login-card{border-color:#5c293c}} .cloud-login-card img{box-shadow:0 12px 35px #0008}</style></head><body class="cloud-locked"><section class="cloud-login-shell" id="cloud-login-shell"><div class="cloud-login-card"><img src="./icon.svg" alt="Gym Tracker Cloud icon" style="display:block;width:82px;height:82px;border-radius:19px;margin-bottom:18px"><h2>My <span class="accent">Gym</span> Tracker</h2><p class="muted">☁️ Your workouts, food and progress in one place</p><div class="cloud-auth-modes"><button type="button" data-auth-mode="login" class="active">Log in</button><button type="button" data-auth-mode="signup">Sign up</button><button type="button" data-auth-mode="reset">Forgot password</button></div><form id="cloud-login-form"><label>Email<input id="cloud-email" class="field" type="email" autocomplete="email" required></label><label id="cloud-password-label">Password<input id="cloud-password" class="field" type="password" minlength="8" autocomplete="current-password" required></label><button class="primary" id="cloud-auth-submit" type="submit">Log in</button></form><form id="cloud-recovery-form" hidden><h3>Choose a new password</h3><label>New password<input id="cloud-new-password" class="field" type="password" minlength="8" autocomplete="new-password" required></label><label>Confirm password<input id="cloud-confirm-password" class="field" type="password" minlength="8" autocomplete="new-password" required></label><button class="primary" type="submit">Update password</button></form><p class="muted tiny" id="cloud-login-status" role="status">Use your existing Supabase test account.</p><p class="muted tiny">This testing version uses account-specific local storage. It does not access your personal tracker records.</p></div></section><header><div class="row"><div><h1>My <span class="accent">Gym</span> Tracker</h1><div class="sub tiny">Your training & nutrition plan</div></div></div></header><main id="app"></main><nav class="tabs" id="tabs" aria-label="App navigation"><button data-tab="today" class="active" aria-label="Today"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2.5-9.2 8a1.2 1.2 0 0 0 1.6 1.8L5 11.8V20a2 2 0 0 0 2 2h3.4v-6.2h3.2V22H17a2 2 0 0 0 2-2v-8.2l.6.5a1.2 1.2 0 0 0 1.6-1.8L12 2.5Z"/></svg></span><span class="nav-label">Today</span></button><button data-tab="workout" aria-label="Train"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="6" y="6.5" width="3.2" height="11" rx="1"/><rect x="14.8" y="6.5" width="3.2" height="11" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="9" y="11" width="6" height="2" rx="1"/></svg></span><span class="nav-label">Train</span></button><button data-tab="brother" aria-label="Mickey\'s Workout"><span class="nav-icon" aria-hidden="true">🤝</span><span class="nav-label">Mickey\'s Workout</span></button><button data-tab="progress" aria-label="Progress"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="4" width="4" height="17" rx="1"/><rect x="17" y="9" width="4" height="12" rx="1"/></svg></span><span class="nav-label">Progress</span></button><button data-tab="prs" aria-label="Personal Records"><span class="nav-icon" aria-hidden="true">🏆</span><span class="nav-label">PRs</span></button><button data-tab="food" aria-label="Food"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 2a1 1 0 0 1 1 1v7h1V3a1 1 0 0 1 2 0v7h1V3a1 1 0 0 1 2 0v7a4 4 0 0 1-3 3.87V21a1.5 1.5 0 0 1-3 0v-7.13A4 4 0 0 1 3 10V3a1 1 0 0 1 2-1Zm13 0c-2.8 1.9-4 5.8-4 10.6h3V21a1.5 1.5 0 0 0 3 0V3.6c0-1.5-.8-2.2-2-1.6Z"/></svg></span><span class="nav-label">Food</span></button><button data-tab="settings" aria-label="More"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="5" cy="12" r="2.3"/><circle cx="12" cy="12" r="2.3"/><circle cx="19" cy="12" r="2.3"/></svg></span><span class="nav-label">More</span></button></nav>
-<script src="plan-data.js?v=62"></script><script>
+<script src="plan-data.js?v=63"></script><script>
 'use strict';
 const PLAN=window.GYM_PLAN;let K='my-gym-cloud-no-user';const weekdays=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];let state={logs:[],bodyWeights:[],shoppingChecked:[],selectedDay:null,customDays:{}};/* Account-specific state is loaded only after authentication. */;let tab='today', edit={},pickerOpen=false,exerciseSearch='',exerciseCategory='All',timerEnd=0,timerInterval=null,metric='Machine chest press',restChoice=90,openExercise=0;
 let timerNotified=false;
@@ -388,9 +388,24 @@ function nutritionSetTargets(){const n=nutritionEdit(),values={},fields=[['calor
 function nutritionAddMeal(){const name=prompt('Food or meal');if(!name?.trim())return;const values={};for(const [key,label,max] of [['calories','Calories',10000],['protein','Protein grams',500],['carbs','Carbs grams',1000],['fat','Fat grams',500]]){const a=prompt(label,'0');if(a===null)return;const v=Number(a);if(!Number.isFinite(v)||v<0||v>max){alert('Invalid '+key+' value');return}values[key]=Math.round(v*10)/10}nutritionEdit().entries.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),date:window.foodLogDate||today(),name:name.trim().slice(0,100),...values});save();render()}
 function nutritionDeleteMeal(id){if(!confirm('Delete food entry?'))return;const n=nutritionEdit();n.entries=n.entries.filter(x=>x.id!==id);save();render()}
 const keepStockedItems=[
-['Chicken breast','5kg'],['Salmon','1.8kg per month'],['Eggs','About 75–90 per month'],['Oats','About 3–3.5kg per month'],['Microwave long-grain rice','About 24 × 260g packs per month'],['New potatoes','About 10–11kg per month'],['Greek-style yoghurt','About 6kg per month'],['Semi-skimmed milk','About 11–12 litres per month'],['Frozen mixed vegetables','About 9kg per month'],['Wholemeal bread','About 5–6 loaves per month'],['Bananas','About 28–35 per month'],['Nescafé cappuccino sachets','About 20–22 per month'],['Men’s A–Z multivitamin','1 capsule daily'],['Applied Nutrition BodyFuel electrolytes','1 tablet per gym day'],['Creatine','5g daily']
+['Chicken breast','About 7kg per month (5kg currently in stock; top up as needed)'],
+['Salmon','About 1.8–2kg per month'],
+['Eggs','About 75–90 per month'],
+['Oats','About 3kg per month'],
+['Microwave long-grain rice','About 24 × 260g packs per month'],
+['New potatoes','About 10–11kg per month'],
+['Greek-style yoghurt','About 6kg per month'],
+['Semi-skimmed milk','About 10–12 litres per month'],
+['Frozen mixed vegetables','About 9kg per month'],
+['Wholemeal bread','About 5–6 loaves per month'],
+['Bananas','About 28–35 per month'],
+['Nescafé cappuccino sachets','About 20–22 per month'],
+['Men’s A–Z multivitamin','1 capsule daily; follow label'],
+['Applied Nutrition BodyFuel electrolytes','1 tablet per gym day; follow label'],
+['Creatine','5g daily'],
+['OxyShred','Label serving only; if tolerated']
 ];
-function nutritionUseKeepStocked(){const n=nutritionEdit();const count=(n.shopping||[]).length;if(!confirm('Replace all '+count+' current shopping-list items with the 15 KEEP STOCKED items? This cannot be undone unless you have a backup. Meal plans and food logs stay unchanged.'))return;n.shopping=keepStockedItems.map(([name,quantity])=>({id:Date.now().toString(36)+Math.random().toString(36).slice(2),name,quantity,checked:false}));save();render()}
+function nutritionUseKeepStocked(){const n=nutritionEdit();const count=(n.shopping||[]).length;if(!confirm('Replace all '+count+' current shopping-list items with the '+keepStockedItems.length+' KEEP STOCKED items? This cannot be undone unless you have a backup. Meal plans and food logs stay unchanged.'))return;n.shopping=keepStockedItems.map(([name,quantity])=>({id:Date.now().toString(36)+Math.random().toString(36).slice(2),name,quantity,checked:false}));save();render()}
 function nutritionAddShopping(){const name=prompt('Shopping list item');if(!name?.trim())return;nutritionEdit().shopping.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),name:name.trim().slice(0,100),checked:false});save();render()}
 function nutritionCheckShopping(id){const x=nutritionEdit().shopping.find(v=>v.id===id);if(!x)return;x.checked=!x.checked;save();render()}
 function nutritionDeleteShopping(id){if(!confirm('Remove item?'))return;const n=nutritionEdit();n.shopping=n.shopping.filter(x=>x.id!==id);save();render()}
@@ -399,62 +414,106 @@ function nutritionLogFavourite(id){const n=nutritionEdit(),x=(n.favourites||[]).
 function nutritionRemoveFavourite(id){if(!confirm('Remove favourite? Existing food logs remain.'))return;const n=nutritionEdit();n.favourites=(n.favourites||[]).filter(e=>e.id!==id);save();render()}
 function nutritionClearChecked(){const n=nutritionEdit(),count=n.shopping.filter(x=>x.checked).length;if(!count)return;if(!confirm('Remove '+count+' checked items?'))return;n.shopping=n.shopping.filter(x=>!x.checked);save();render()}
 const WEEKLY_DAYS=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
-const weeklyDefault=[
-['9:00 am','OxyShred'],
-['9:30 am','80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + 1 multivitamin capsule'],
-['1:00 pm','150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed veg'],
-['4:15 pm','200g Greek-style yoghurt + 1 medium banana'],
-['4:30–4:45 pm','1 Nescafé cappuccino'],
-['8:30 pm','150g raw chicken breast + 350g raw new potatoes + 150g frozen veg'],
-['11:15 pm','2 slices wholemeal toast'],
-['12:30 am','Gym'],
-['During gym','1 BodyFuel electrolyte tablet in 500ml water'],
-['Post-gym','2 eggs + 2 slices wholemeal toast']
-];
-const weeklyMealPresetDays=WEEKLY_DAYS.map((day,i)=>{
-let rows=weeklyDefault.map(x=>x.slice());
-if(i===1||i===3){
-rows[5][1]='150g raw salmon + 350g raw new potatoes + 150g veg';
-rows[6][1]='1 banana OR 2 slices wholemeal toast';
-rows[9][1]='200g Greek-style yoghurt + 1 banana';
+const weeklyShiftRows={
+MONDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['4:30 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['5:00 pm','1 Nescafé cappuccino'],
+['5:30 pm–2:00 am','Work'],
+['9:00 pm','Work meal: 150g raw chicken breast + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['2:00 am','Finish work'],
+['2:15 am','Pre-gym: 2 slices wholemeal toast'],
+['2:30 am','Gym (after work)'],
+['During gym','Applied Nutrition BodyFuel according to label, with water'],
+['After gym','2 eggs + 2 slices wholemeal toast']
+],
+TUESDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['4:30 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['5:00 pm','1 Nescafé cappuccino'],
+['5:30 pm–2:00 am','Work'],
+['9:00 pm','Work meal: 150g raw salmon + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['2:00 am','Finish work'],
+['2:15 am','Pre-gym: 1 banana OR 2 slices wholemeal toast'],
+['2:30 am','Gym (after work)'],
+['During gym','Applied Nutrition BodyFuel according to label, with water'],
+['After gym','200g Greek-style yoghurt + 1 banana']
+],
+WEDNESDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['4:30 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['5:00 pm','1 Nescafé cappuccino'],
+['5:30 pm–2:00 am','Work'],
+['9:00 pm','Work meal: 150g raw chicken breast + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['2:00 am','Finish work'],
+['2:15 am','Pre-gym: 2 slices wholemeal toast'],
+['2:30 am','Gym (after work)'],
+['During gym','Applied Nutrition BodyFuel according to label, with water'],
+['After gym','2 eggs + 2 slices wholemeal toast']
+],
+THURSDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['4:30 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['5:00 pm','1 Nescafé cappuccino'],
+['5:30 pm–2:00 am','Work'],
+['9:00 pm','Work meal: 150g raw salmon + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['2:00 am','Finish work'],
+['2:15 am','Pre-gym: 1 banana OR 2 slices wholemeal toast'],
+['2:30 am','Gym (after work)'],
+['During gym','Applied Nutrition BodyFuel according to label, with water'],
+['After gym','200g Greek-style yoghurt + 1 banana']
+],
+FRIDAY:[
+['12:30 am','Gym (Friday midnight session; unchanged)'],
+['During gym','Applied Nutrition BodyFuel according to label, with water'],
+['After gym','2 eggs + 2 slices wholemeal toast OR 200g Greek-style yoghurt + 50g oats'],
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['4:30 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['5:00 pm','1 Nescafé cappuccino'],
+['5:30 pm–2:00 am','Work'],
+['9:00 pm','Work meal: 150g raw chicken breast + 350g raw new potatoes + 150g frozen mixed vegetables']
+],
+SATURDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['5:30 pm','Meal: 150g raw salmon + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['8:00 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['10:30 pm','2 eggs + 2 slices wholemeal toast OR 60g oats + 250ml milk'],
+['Optional','30–45 min easy treadmill walk']
+],
+SUNDAY:[
+['10:30 am','Wake / OxyShred (label serving only)'],
+['11:00 am',"Breakfast: 80g oats + 300ml semi-skimmed milk + 5g creatine + 2 eggs + men's A–Z multivitamin"],
+['2:30 pm','Lunch: 150g raw chicken breast + 200g cooked microwave long-grain rice + 150g frozen mixed vegetables'],
+['5:30 pm','Meal: 150g raw chicken breast + 350g raw new potatoes + 150g frozen mixed vegetables'],
+['8:00 pm','Snack: 200g Greek-style yoghurt + 1 banana'],
+['10:30 pm','60g oats + 250ml milk OR 2 eggs + 2 slices wholemeal toast'],
+['Optional','30–45 min easy treadmill walk']
+]};
+const weeklyMealPresetDays=WEEKLY_DAYS.map(day=>({day,meals:weeklyShiftRows[day].map(([time,item])=>({time,item}))}));
+const weeklyMealPreset={id:'shift-530pm-2am-friday-midnight-v63',title:'New Work Shift Plan — 5:30 PM to 2:00 AM',days:weeklyMealPresetDays};
+function nutritionImportWeeklyPlan(){
+if(!confirm("Import the updated 5:30 PM–2:00 AM work-shift meal plan? Monday–Thursday gym is 2:30 AM; Friday stays at 12:30 AM. This replaces your current weekly meal plan, preserves food logs, favourites and shopping items, and resets only this week's meal checkmarks so they do not carry over to different meals."))return;
+const n=nutritionEdit();n.weeklyMealPlan=JSON.parse(JSON.stringify(weeklyMealPreset));n.weeklyMealChecks||={};delete n.weeklyMealChecks[weeklyMealWeekKey()];save();render();alert('New work-shift meal plan imported. Your food logs, favourites and shopping list are unchanged.');
 }
-if(i===4){
-rows[5]=['8:00 pm','150g raw chicken breast + 350g raw new potatoes + 150g veg'];
-rows[6]=['11:15 pm','1 banana OR 2 slices wholemeal toast'];
-rows[7]=['12:30 am','Gym'];
-rows[9]=['Post-gym','2 eggs + 2 slices toast OR 200g yoghurt + 50g oats'];
-}
-if(i>=5){
-rows=[
-['9:00 am','OxyShred'],
-['9:30 am','80g oats + 300ml milk + 5g creatine + 2 eggs + 1 multivitamin capsule'],
-['1:30 pm','150g raw chicken breast + 200g cooked microwave long-grain rice + 150g veg'],
-['5:00 pm',i===5?'150g raw salmon + 350g raw new potatoes + 150g veg':'150g raw chicken breast + 350g raw new potatoes + 150g veg'],
-['7:30 pm','200g Greek-style yoghurt + 1 banana'],
-['10:00 pm',i===5?'2 eggs + 2 slices toast OR 60g oats + 250ml milk':'60g oats + 250ml milk OR 2 eggs + 2 slices toast']
-];
-}
-return {day,meals:rows.map(([time,item])=>({time,item}))};
-});
-const weeklyMealPreset={id:'chicken-salmon-microwave-rice-2026',title:'Chicken Breast + Salmon — Microwave Rice',days:weeklyMealPresetDays};
-function nutritionUpdateFridayGymTimes(){
-const n=nutritionEdit(),fri=n.weeklyMealPlan?.days?.find(d=>d.day==='FRIDAY');
-if(!fri||!Array.isArray(fri.meals)){alert('Import a weekly plan first to update Friday.');return}
-const updates=[['9:45 pm','11:15 pm','1 banana OR 2 slices wholemeal toast'],['10:30–10:45 pm','12:30 am','Gym'],['11:45 pm','Post-gym','2 eggs + 2 slices toast OR 200g yoghurt + 50g oats']];
-let count=0;
-const replacements=fri.meals.map(m=>{const update=updates.find(([old,newTime,item])=>m?.time===old&&m?.item===item);if(!update)return m;count++;return {...m,time:update[1]}});
-if(!count){alert('No original Friday gym times found to update. Your customised entries were left unchanged.');return}
-if(!confirm('Update '+count+' Friday meal/gym times to the 12:30 AM schedule? Other meals, checkmarks and food logs will be preserved.'))return;
-fri.meals=replacements;save();render();alert('Friday schedule updated. '+count+' time entries changed.');
-}
-function nutritionImportWeeklyPlan(){if(!confirm('Import the updated Chicken Breast + Salmon weekly plan with 200g cooked microwave rice per rice meal? This replaces your current weekly plan but keeps shopping items and food logs unchanged.'))return;const n=nutritionEdit();n.weeklyMealPlan=JSON.parse(JSON.stringify(weeklyMealPreset));save();render()}
 function nutritionAddWeeklyMeal(day){const text=prompt('Add a meal or note for '+day);if(!text||!text.trim())return;const time=prompt('Time (optional)','');if(time===null)return;const n=nutritionEdit();n.weeklyMealPlan||={id:'custom',title:'My weekly meal plan',days:WEEKLY_DAYS.map(day=>({day,meals:[]}))};const d=n.weeklyMealPlan.days.find(x=>x.day===day);if(!d)return;d.meals.push({time:time.slice(0,35),item:text.trim().slice(0,250)});save();render()}
 function nutritionRemoveWeeklyMeal(day,index){if(!confirm('Remove this meal from your weekly plan?'))return;const n=nutritionEdit(),d=n.weeklyMealPlan?.days?.find(x=>x.day===day);if(!d||!d.meals[index])return;d.meals.splice(index,1);save();render()}
 function weeklyMealWeekKey(){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function nutritionCheckWeeklyMeal(day,index,checked,el){const n=nutritionEdit();n.weeklyMealChecks||={};const week=weeklyMealWeekKey();n.weeklyMealChecks[week]||={};const key=day+':'+index;if(checked)n.weeklyMealChecks[week][key]=true;else delete n.weeklyMealChecks[week][key];const row=el?.closest('.meal');if(row){const label=row.querySelector('.weekly-meal-text');if(label){label.style.textDecoration=checked?'line-through':'none';label.style.opacity=checked?'.55':'1'}}save()}
 function renderWeeklyMealPlanCard(){
 const n=nutritionData(),plan=n.weeklyMealPlan,week=weeklyMealWeekKey(),checks=n.weeklyMealChecks?.[week]||{};
-let out='<section class="card"><div class="row"><h2>🗓️ Weekly meal plan</h2><button class="primary" onclick="nutritionImportWeeklyPlan()">⬇ Import plan</button><button class="secondary" onclick="nutritionUpdateFridayGymTimes()">🕒 Update Friday times</button></div><p class="muted tiny">Import the Chicken Breast + Salmon plan with 200g cooked microwave long-grain rice at each rice meal for Monday to Sunday. Meal times and quantities are shown as provided. Your food logs and saved favourites are not removed.</p>';
+let out='<section class="card"><div class="row"><h2>🗓️ Weekly meal plan</h2><button class="primary" onclick="nutritionImportWeeklyPlan()">⬇ Import new shift plan</button></div><p class="muted tiny">New work shift: 5:30 pm–2:00 am. Monday–Thursday gym is 2:30 am after work; Friday stays at 12:30 am. Rice portions are 200g cooked. Importing replaces only the weekly meal plan; food logs, favourites and shopping items stay unchanged.</p>';
 if(!plan){out+='<p class="muted tiny">No weekly plan imported yet. You can import the premade plan or add meals to a day below.</p>'}
 for(const day of WEEKLY_DAYS){
 const meals=plan?.days?.find(x=>x.day===day)?.meals||[];
@@ -482,7 +541,7 @@ function renderFood(){if(window.cloudGymUser)return renderPersonalNutrition();co
  return '<div class="food-accordion">'+foodDropdown('meals','🍽️ Food plan',meals,esc(section))+foodDropdown('supplements','💊 Supplements',supp)+foodDropdown('portions','📏 Food preparation & portions',portions)+foodDropdown('prep','🐟 Chicken & salmon preparation',prep)+foodDropdown('shopping','🛒 Shopping checklist',shopping)+'</div>';
 }
 function toggleShop(i){state.shoppingChecked=state.shoppingChecked.includes(i)?state.shoppingChecked.filter(x=>x!==i):[...state.shoppingChecked,i];save();render()}
-function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync <small style="font-size:11px;color:#aab">v62 beta</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="primary" onclick="window.cloudSaveNow?.()">☁️ Back up now</button><button class="secondary" onclick="window.cloudFirstBackup?.()">🛡️ Create first backup safely</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><details id="cloud-recovery" style="margin-top:12px"><summary style="cursor:pointer;padding:12px 0">Advanced sync recovery (only if needed)</summary><div class="stack"><button class="primary full" onclick="window.cloudLoadToNewDevice?.()">📲 Load cloud workout on this device (safe)</button><button class="secondary full" onclick="window.cloudInspect?.()">🛡️ Compare copies & download safety backup</button><button class="secondary full" onclick="window.cloudReview?.()">🔎 Review local and cloud copies</button><button class="secondary full" onclick="window.cloudMerge?.()">🔀 Merge unique workout sets (safe preview)</button><div id="cloud-conflict-detail">'+(window.cloudConflictDetails||'')+'</div></div></details><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
+function renderCloudControls(){return '<section class="card"><h2>☁️ Automatic cloud sync <small style="font-size:11px;color:#aab">v63 beta</small></h2><p class="muted tiny">Account: '+esc(window.cloudGymUser?.email||'')+'. Saves automatically after edits when online. Conflicting edits from another device will pause syncing instead of overwriting them.</p><div class="row"><button class="secondary" onclick="window.cloudCheck?.()">↻ Check cloud now</button><button class="primary" onclick="window.cloudSaveNow?.()">☁️ Back up now</button><button class="secondary" onclick="window.cloudFirstBackup?.()">🛡️ Create first backup safely</button><button class="secondary" onclick="window.cloudLogout?.()">Sign out</button></div><p id="cloud-status" class="muted tiny">'+esc(window.cloudStatusText||'Checking cloud…')+'</p><details id="cloud-recovery" style="margin-top:12px"><summary style="cursor:pointer;padding:12px 0">Advanced sync recovery (only if needed)</summary><div class="stack"><button class="primary full" onclick="window.cloudLoadToNewDevice?.()">📲 Load cloud workout on this device (safe)</button><button class="secondary full" onclick="window.cloudInspect?.()">🛡️ Compare copies & download safety backup</button><button class="secondary full" onclick="window.cloudReview?.()">🔎 Review local and cloud copies</button><button class="secondary full" onclick="window.cloudMerge?.()">🔀 Merge unique workout sets (safe preview)</button><div id="cloud-conflict-detail">'+(window.cloudConflictDetails||'')+'</div></div></details><p class="muted tiny">If a conflict occurs, export your test backup before resolving it. Your original personal app remains separate.</p></section>'}
 function renderAccountSettings(){return '<section class="card"><h2>🔐 Account & security</h2><p class="muted tiny">Signed in as '+esc(window.cloudGymUser?.email||'')+'</p><p class="muted tiny">Change your password for this account. Your workouts, nutrition and photos will remain saved.</p><form id="cloud-change-password-form" onsubmit="event.preventDefault();window.cloudChangePassword?.()"><label>New password<input id="cloud-account-new-pass" class="field" type="password" minlength="8" autocomplete="new-password" required></label><label>Confirm new password<input id="cloud-account-confirm-pass" class="field" type="password" minlength="8" autocomplete="new-password" required></label><button class="secondary" type="submit">Update account password</button></form><p id="cloud-account-message" class="muted tiny" role="status"></p><p class="muted tiny">Permanently delete this signed-in account, its cloud workouts, nutrition records and private cloud photos. This cannot be undone. Local device backups are not deleted automatically.</p><button class="secondary" type="button" onclick="window.cloudTestDeleteConnection?.()">🛡️ Test deletion connection (no deletion)</button><button class="secondary danger" type="button" onclick="window.cloudDeleteAccount?.()">Permanently delete my account</button><p id="cloud-delete-message" class="muted tiny" role="status"></p><p class="muted tiny">Deletion only affects the account you are currently signed into. Keep any backups you wish to retain.</p></section>'}
 function renderSettings(){return `${renderCloudControls()}${renderAccountSettings()}${renderGymCheckin()}${renderGymLocator()}${renderNoticeSettings()}<div class="card"><h2>Your data & backups</h2><p class="muted">Workouts and nutrition are saved locally and synced to your account in Supabase when cloud sync succeeds. JSON backups exclude progress photos. Check sync status before switching devices.</p><div class="stack"><button class="primary" onclick="exportData()">⬇ Export backup (JSON)</button><label for="import">Import a previous backup</label><input class="field" type="file" id="import" accept=".json,application/json" onchange="importData(this)"><button class="secondary danger" onclick="clearData()">Clear my saved data</button></div></div><div class="card"><h3>Privacy & release information</h3><p class="muted tiny">Review how the beta stores account, workout, nutrition and progress-photo data. The privacy page is a pre-release draft, not a final legal policy.</p><a class="secondary" style="display:inline-block;padding:11px 15px;border-radius:12px" href="./cloud-privacy.html" target="_blank" rel="noopener">Read privacy information ↗</a></div><div class="card"><h3>Help &amp; support</h3><p class="muted tiny">Get help with your account, syncing, photos or deletion.</p><a class="secondary" style="display:inline-block;padding:11px 15px;border-radius:12px" href="./cloud-support.html" target="_blank" rel="noopener">Open support page ↗</a></div><div class="card"><h3>📱 Install My Gym Tracker Cloud</h3><p class="muted tiny">iPhone: open this cloud version in Safari, tap Share → Add to Home Screen. Android: open this cloud version in Chrome, tap the browser menu → Install app or Add to Home screen.</p><p class="muted tiny">Install this cloud version separately from your original tracker. iPhone: open in Safari (not the ChatGPT in-app browser) → Share → Add to Home Screen. Android: use Chrome → menu → Add to Home screen. Internet is needed for sign-in and cloud sync. Check sync status before switching devices.</p></div>`}
 
